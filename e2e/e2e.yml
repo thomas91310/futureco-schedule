@@ -1,0 +1,51 @@
+# Copy to .github/workflows/e2e.yml
+# Action versions are reference values: check the current major version of each.
+name: e2e
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    # Secrets are not available to fork PRs, and untrusted code should not get them.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEON_PROJECT_ID: ${{ secrets.NEON_TEST_PROJECT_ID }}
+      NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install CLIs
+        run: |
+          npm i -g neonctl vercel
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      # The script deletes the Neon branch and deployment via a shell trap,
+      # even when the tests fail.
+      - name: Run e2e
+        run: ./scripts/e2e.sh
