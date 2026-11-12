@@ -90,6 +90,7 @@ command below.
   response status.
 - New or changed endpoints need a matching test in `e2e/` that asserts both the
   HTTP status and `status_code` in the body.
+- Always return JSON even on 404 errors
 
 ## APIDB rules
 
@@ -121,4 +122,4 @@ command below.
   `scripts/e2e.sh` or the e2e CI job, never as part of the unit test run.
 - Do not edit installed skills in `.agents/skills/` unless asked; project-specific
   guidance goes in this file.
-- add .gitignore and update
+- add .gitignore and update as you go

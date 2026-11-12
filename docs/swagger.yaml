@@ -1,0 +1,298 @@
+basePath: /
+definitions:
+  httpapi.AppointmentListResponse:
+    properties:
+      has_more:
+        example: false
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/schedule.Appointment'
+        type: array
+      next_cursor:
+        type: string
+      status_code:
+        example: 200
+        type: integer
+    type: object
+  httpapi.AppointmentResponse:
+    properties:
+      ends_at:
+        example: "2026-01-15T10:30:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      starts_at:
+        example: "2026-01-15T10:00:00Z"
+        type: string
+      status_code:
+        example: 201
+        type: integer
+      trainer_id:
+        example: 1
+        type: integer
+      user_id:
+        example: 2
+        type: integer
+    type: object
+  httpapi.AvailableTimesResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/schedule.Slot'
+        type: array
+      status_code:
+        example: 200
+        type: integer
+    type: object
+  httpapi.CreateAppointmentRequest:
+    properties:
+      ends_at:
+        example: "2026-01-15T10:30:00Z"
+        type: string
+      starts_at:
+        example: "2026-01-15T10:00:00Z"
+        type: string
+      trainer_id:
+        example: 1
+        type: integer
+      user_id:
+        example: 2
+        type: integer
+    type: object
+  httpapi.ErrorBadRequest:
+    properties:
+      error:
+        example: ends_at must be after starts_at
+        type: string
+      status_code:
+        example: 400
+        type: integer
+    type: object
+  httpapi.ErrorConflict:
+    properties:
+      error:
+        example: slot already booked
+        type: string
+      status_code:
+        example: 409
+        type: integer
+    type: object
+  httpapi.ErrorInternal:
+    properties:
+      error:
+        example: internal error
+        type: string
+      status_code:
+        example: 500
+        type: integer
+    type: object
+  httpapi.ErrorNotFound:
+    properties:
+      error:
+        example: trainer not found
+        type: string
+      status_code:
+        example: 404
+        type: integer
+    type: object
+  httpapi.ErrorUnavailable:
+    properties:
+      error:
+        example: database unavailable
+        type: string
+      status_code:
+        example: 503
+        type: integer
+    type: object
+  httpapi.HealthResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+      status_code:
+        example: 200
+        type: integer
+    type: object
+  schedule.Appointment:
+    properties:
+      ends_at:
+        example: "2026-01-15T10:30:00Z"
+        type: string
+      id:
+        example: 1
+        type: integer
+      starts_at:
+        example: "2026-01-15T10:00:00Z"
+        type: string
+      trainer_id:
+        example: 1
+        type: integer
+      user_id:
+        example: 2
+        type: integer
+    type: object
+  schedule.Slot:
+    properties:
+      ends_at:
+        example: "2026-01-15T10:30:00Z"
+        type: string
+      starts_at:
+        example: "2026-01-15T10:00:00Z"
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Trainer scheduling API. Schedule routes use the /api/v1 prefix below.
+    GET /api/health checks the database and is not versioned, because the later e2e
+    warm-up calls that path.
+  title: futureco-schedule
+  version: "1.0"
+paths:
+  /api/health:
+    get:
+      description: Runs SELECT 1. Mounted at GET /api/health, outside /api/v1, so
+        the e2e warm-up path stays stable.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.HealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/httpapi.ErrorUnavailable'
+      summary: Database health
+      tags:
+      - health
+  /api/v1/appointments:
+    post:
+      consumes:
+      - application/json
+      description: Books one half-hour slot during Monday through Friday, 8:00am to
+        5:00pm Pacific. The trainer and user must exist, and the trainer must be free
+        at starts_at.
+      parameters:
+      - description: Appointment
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/httpapi.CreateAppointmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/httpapi.AppointmentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpapi.ErrorBadRequest'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ErrorNotFound'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/httpapi.ErrorConflict'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpapi.ErrorInternal'
+      summary: Create an appointment
+      tags:
+      - appointments
+  /api/v1/trainers/{trainer_id}/appointments:
+    get:
+      description: Returns a trainer's appointments ordered by start time. Use cursor
+        from next_cursor to read the next page.
+      parameters:
+      - description: Trainer ID
+        in: path
+        name: trainer_id
+        required: true
+        type: integer
+      - description: Page size, default 50, maximum 100
+        in: query
+        name: limit
+        type: integer
+      - description: Opaque cursor from the previous page
+        in: query
+        name: cursor
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AppointmentListResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpapi.ErrorBadRequest'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ErrorNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpapi.ErrorInternal'
+      summary: List scheduled appointments
+      tags:
+      - appointments
+  /api/v1/trainers/{trainer_id}/available-times:
+    get:
+      description: Returns unbooked 30-minute slots that start on a half-hour, start
+        at or after starts_at, end at or before ends_at, and fall on Monday through
+        Friday between 8:00am and 5:00pm Pacific. The window must be 31 days or less.
+      parameters:
+      - description: Trainer ID
+        in: path
+        name: trainer_id
+        required: true
+        type: integer
+      - description: Window start (RFC3339)
+        in: query
+        name: starts_at
+        required: true
+        type: string
+      - description: Window end (RFC3339)
+        in: query
+        name: ends_at
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/httpapi.AvailableTimesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httpapi.ErrorBadRequest'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httpapi.ErrorNotFound'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httpapi.ErrorInternal'
+      summary: List available times
+      tags:
+      - appointments
+schemes:
+- http
+- https
+swagger: "2.0"

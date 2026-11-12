@@ -19,6 +19,12 @@
       "skillPath": "skills/golang-database/SKILL.md",
       "computedHash": "d56ece0241eacc7a15cd3679300b80100d527c3a83d5b475f631bb8c7ddd8bff"
     },
+    "golang-lint": {
+      "source": "samber/cc-skills-golang",
+      "sourceType": "github",
+      "skillPath": "skills/golang-lint/SKILL.md",
+      "computedHash": "a1aec81b2c6b8441dd8e5bba762ea1b679bd01cd88879730edc2404af0601503"
+    },
     "golang-observability": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
