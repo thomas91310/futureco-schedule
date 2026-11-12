@@ -105,12 +105,10 @@ func openPool(ctx context.Context) (*pgxpool.Pool, error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing DATABASE_URL: %w", err)
 	}
-	// MaxConns is 3 because a later Vercel deploy runs many short-lived
-	// isolates, and each isolate opens its own pool. A larger pool per
-	// isolate would exhaust Neon through the pooler. The database skill's
-	// example of 25 connections is for one long-running server, not for
-	// many isolates sharing one Postgres.
-	cfg.MaxConns = 3
+	// One cloud API process serves concurrent requests on this pool.
+	// 25 is the open-connection cap for a single server. Idle connections
+	// close after a minute, and each connection is recycled after five minutes.
+	cfg.MaxConns = 25
 	cfg.MaxConnLifetime = 5 * time.Minute
 	cfg.MaxConnIdleTime = 1 * time.Minute
 

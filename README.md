@@ -1,6 +1,7 @@
 # futureco-schedule
 
-Local setup uses Docker Postgres. The API and the Neon end-to-end flow are separate. `scripts/e2e.sh` needs its own Neon test project and is not part of this local database.
+Local setup uses Docker Postgres.
+There has been a planning effort to do a end to end test using Vercel + Neon but ended up depreciating this to a TODO (bottom of the readme).
 
 ## Requirements
 
@@ -27,8 +28,6 @@ Host port `5433` maps to port `5432` inside the container, so this database can 
 ```text
 postgres://futureco:futureco@localhost:5433/futureco?sslmode=disable
 ```
-
-User, password, and database name are the local image defaults (`futureco`). They are not Neon credentials. Neon connections use `sslmode=require`.
 
 A shell inside the container:
 
@@ -72,10 +71,6 @@ Start the database first (`scripts/setup.sh`), then from the repo root:
 export DATABASE_URL='postgres://futureco:futureco@localhost:5433/futureco?sslmode=disable'
 go run .
 ```
-
-`DATABASE_URL` is required. `PORT` defaults to `8080`. `LOG_FORMAT=text` switches logs from JSON to text. The local URL above is the Docker image default, not a Neon credential.
-
-The process opens a pgx pool with `MaxConns` set to 3. A later Vercel deploy runs many short-lived isolates, and each isolate opens its own pool. A larger pool per isolate would exhaust Neon through the pooler. The database skill's example of 25 connections is for one long-running server. The comment next to the setting is in `openPool` in `main.go`.
 
 ### Open locally
 
@@ -159,4 +154,3 @@ The Vercel and Neon end-to-end flow is not part of local development. Do not run
 - [ ] Assert HTTP status and body `status_code` for `GET /api/health`, create-then-list, available times after a booking, 404 for a missing trainer, 400 for invalid input, and 409 for a taken slot.
 - [ ] Copy `e2e/e2e.yml` to `.github/workflows/e2e.yml` after checking each Action's current major version. Keep it on pull requests to `main` and manual dispatch, never on fork pull requests.
 - [ ] Run the flow only through `scripts/e2e.sh` against a temporary Neon branch and a Vercel preview. Do not run it as part of local development or the unit test command.
-

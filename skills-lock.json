@@ -43,6 +43,12 @@
       "skillPath": "skills/golang-testing/SKILL.md",
       "computedHash": "adfaf95d45383e8e579de1770ea0f25d0729b3e94e0b003ea08d1646646f7247"
     },
+    "neon-postgres": {
+      "source": "neondatabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/neon-postgres/SKILL.md",
+      "computedHash": "692a5436b9f23caae7887cedc93f0e3eb099e5da72794b9c0c902030e180b687"
+    },
     "supabase-postgres-best-practices": {
       "source": "supabase/agent-skills",
       "sourceType": "github",
