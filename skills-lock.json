@@ -19,6 +19,12 @@
       "skillPath": "skills/golang-database/SKILL.md",
       "computedHash": "d56ece0241eacc7a15cd3679300b80100d527c3a83d5b475f631bb8c7ddd8bff"
     },
+    "golang-lint": {
+      "source": "samber/cc-skills-golang",
+      "sourceType": "github",
+      "skillPath": "skills/golang-lint/SKILL.md",
+      "computedHash": "a1aec81b2c6b8441dd8e5bba762ea1b679bd01cd88879730edc2404af0601503"
+    },
     "golang-observability": {
       "source": "samber/cc-skills-golang",
       "sourceType": "github",
@@ -36,6 +42,12 @@
       "sourceType": "github",
       "skillPath": "skills/golang-testing/SKILL.md",
       "computedHash": "adfaf95d45383e8e579de1770ea0f25d0729b3e94e0b003ea08d1646646f7247"
+    },
+    "neon-postgres": {
+      "source": "neondatabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/neon-postgres/SKILL.md",
+      "computedHash": "692a5436b9f23caae7887cedc93f0e3eb099e5da72794b9c0c902030e180b687"
     },
     "supabase-postgres-best-practices": {
       "source": "supabase/agent-skills",
