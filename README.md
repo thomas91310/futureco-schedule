@@ -150,11 +150,3 @@ Set `OTEL_EXPORTER_OTLP_ENDPOINT` to export traces over OTLP gRPC. The sampler k
 
 Set `PROFILING_ENABLED=true` and `PYROSCOPE_URL` to start continuous profiling. `/debug/pprof` is not mounted.
 
-## With more time (e2e test with Vercel + Neon DB):
-
-The Vercel and Neon end-to-end flow is not part of local development. Do not run it from the unit tests.
-
-- [ ] Add `e2e` Go tests that read `BASE_URL`, send `x-vercel-protection-bypass` when set, use a client timeout of at least 20s, and avoid depending on existing rows.
-- [ ] Assert HTTP status and body `status_code` for `GET /api/health`, create-then-list, available times after a booking, 404 for a missing trainer, 400 for invalid input, and 409 for a taken slot.
-- [ ] Copy `e2e/e2e.yml` to `.github/workflows/e2e.yml` after checking each Action's current major version. Keep it on pull requests to `main` and manual dispatch, never on fork pull requests.
-- [ ] Run the flow only through `scripts/e2e.sh` against a temporary Neon branch and a Vercel preview. Do not run it as part of local development or the unit test command.
