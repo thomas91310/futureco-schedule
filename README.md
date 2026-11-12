@@ -109,7 +109,11 @@ Success and error bodies include `status_code`, and that number is the HTTP stat
 {"status_code": 409, "error": "slot already booked"}
 ```
 
-400 is a bad window, a span that is not one half-hour slot, or a time outside Monday–Friday 8:00am–5:00pm Pacific. 404 is an unknown path, an unknown trainer, or an unknown user. An unknown path returns `{"status_code":404,"error":"resource not found"}`. A known path called with the wrong method returns `{"status_code":405,"error":"method not allowed"}`. 409 is a trainer who already has that start. 500 is an unexpected database failure. 503 is a failed health check.
+- 400 is a bad window, a span that is not one half-hour slot, or a time outside Monday–Friday 8:00am–5:00pm Pacific.
+- 404 is an unknown path, an unknown trainer, or an unknown user. An unknown path returns `{"status_code":404,"error":"resource not found"}`. A known path called with the wrong method returns `{"status_code":405,"error":"method not allowed"}`.
+- 409 is a trainer who already has that start.
+- 500 is an unexpected database failure.
+- 503 is a failed health check.
 
 ### Swagger
 
