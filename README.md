@@ -150,7 +150,7 @@ Set `OTEL_EXPORTER_OTLP_ENDPOINT` to export traces over OTLP gRPC. The sampler k
 
 Set `PROFILING_ENABLED=true` and `PYROSCOPE_URL` to start continuous profiling. `/debug/pprof` is not mounted.
 
-## TODO:
+## With more time (e2e test with Vercel + Neon DB):
 
 The Vercel and Neon end-to-end flow is not part of local development. Do not run it from the unit tests.
 
