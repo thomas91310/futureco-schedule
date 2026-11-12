@@ -17,6 +17,7 @@ coverage.html
 # macOS
 .DS_Store
 
-# Cursor local state. Plans stay in the repo.
+# Cursor local state. Plans and prompts stay in the repo.
 .cursor/*
 !.cursor/plans/
+!.cursor/prompts/
